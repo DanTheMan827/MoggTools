@@ -1,0 +1,9 @@
+[submodule "LibForge"]
+	path = LibForge
+	url = https://github.com/maxton/LibForge.git
+[submodule "MidiCS"]
+	path = MidiCS
+	url = https://github.com/maxton/MidiCS.git
+[submodule "DtxCS"]
+	path = DtxCS
+	url = https://github.com/maxton/DtxCS.git
