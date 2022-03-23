@@ -3,8 +3,8 @@
  * Use it if you wish.
  */
 using System;
-using System.Text;
 using System.IO;
+using System.Text;
 namespace LibOrbisPkg.Util
 {
     internal static class StreamExtensions

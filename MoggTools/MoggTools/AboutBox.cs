@@ -1,129 +1,128 @@
 using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 
 namespace MoggTools
 {
-	internal class AboutBox : Form
-	{
-		private IContainer components;
+    internal class AboutBox : Form
+    {
+        private IContainer components;
 
-		private TableLayoutPanel tableLayoutPanel;
+        private TableLayoutPanel tableLayoutPanel;
 
-		private Label labelProductName;
+        private Label labelProductName;
 
-		private Label labelVersion;
+        private Label labelVersion;
 
-		private Label labelCopyright;
+        private Label labelCopyright;
 
-		private Label labelCompanyName;
+        private Label labelCompanyName;
 
-		private TextBox textBoxDescription;
+        private TextBox textBoxDescription;
 
-		private Button okButton;
+        private Button okButton;
 
-		public string AssemblyCompany
-		{
-			get
-			{
-				object[] customAttributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
-				if (customAttributes.Length == 0)
-				{
-					return "";
-				}
-				return ((AssemblyCompanyAttribute)customAttributes[0]).Company;
-			}
-		}
+        public string AssemblyCompany
+        {
+            get
+            {
+                object[] customAttributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
+                if (customAttributes.Length == 0)
+                {
+                    return "";
+                }
+                return ((AssemblyCompanyAttribute)customAttributes[0]).Company;
+            }
+        }
 
-		public string AssemblyCopyright
-		{
-			get
-			{
-				object[] customAttributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
-				if (customAttributes.Length == 0)
-				{
-					return "";
-				}
-				return ((AssemblyCopyrightAttribute)customAttributes[0]).Copyright;
-			}
-		}
+        public string AssemblyCopyright
+        {
+            get
+            {
+                object[] customAttributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
+                if (customAttributes.Length == 0)
+                {
+                    return "";
+                }
+                return ((AssemblyCopyrightAttribute)customAttributes[0]).Copyright;
+            }
+        }
 
-		public string AssemblyDescription
-		{
-			get
-			{
-				object[] customAttributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
-				if (customAttributes.Length == 0)
-				{
-					return "";
-				}
-				return ((AssemblyDescriptionAttribute)customAttributes[0]).Description;
-			}
-		}
+        public string AssemblyDescription
+        {
+            get
+            {
+                object[] customAttributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
+                if (customAttributes.Length == 0)
+                {
+                    return "";
+                }
+                return ((AssemblyDescriptionAttribute)customAttributes[0]).Description;
+            }
+        }
 
-		public string AssemblyProduct
-		{
-			get
-			{
-				object[] customAttributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
-				if (customAttributes.Length == 0)
-				{
-					return "";
-				}
-				return ((AssemblyProductAttribute)customAttributes[0]).Product;
-			}
-		}
+        public string AssemblyProduct
+        {
+            get
+            {
+                object[] customAttributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
+                if (customAttributes.Length == 0)
+                {
+                    return "";
+                }
+                return ((AssemblyProductAttribute)customAttributes[0]).Product;
+            }
+        }
 
-		public string AssemblyTitle
-		{
-			get
-			{
-				object[] customAttributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
-				if (customAttributes.Length != 0)
-				{
-					AssemblyTitleAttribute assemblyTitleAttribute = (AssemblyTitleAttribute)customAttributes[0];
-					if (assemblyTitleAttribute.Title != "")
-					{
-						return assemblyTitleAttribute.Title;
-					}
-				}
-				return Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
-			}
-		}
+        public string AssemblyTitle
+        {
+            get
+            {
+                object[] customAttributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
+                if (customAttributes.Length != 0)
+                {
+                    AssemblyTitleAttribute assemblyTitleAttribute = (AssemblyTitleAttribute)customAttributes[0];
+                    if (assemblyTitleAttribute.Title != "")
+                    {
+                        return assemblyTitleAttribute.Title;
+                    }
+                }
+                return Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
+            }
+        }
 
-		public string AssemblyVersion
-		{
-			get
-			{
-				return Assembly.GetExecutingAssembly().GetName().Version.ToString();
-			}
-		}
+        public string AssemblyVersion
+        {
+            get
+            {
+                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            }
+        }
 
-		public AboutBox()
-		{
-			this.InitializeComponent();
-			this.Text = string.Format("About {0}", this.AssemblyTitle);
-			this.labelProductName.Text = this.AssemblyProduct;
-			this.labelVersion.Text = string.Format("Version {0}", this.AssemblyVersion);
-			this.labelCopyright.Text = this.AssemblyCopyright;
-			this.labelCompanyName.Text = this.AssemblyCompany;
-			this.textBoxDescription.Text = this.AssemblyDescription;
-		}
+        public AboutBox()
+        {
+            this.InitializeComponent();
+            this.Text = string.Format("About {0}", this.AssemblyTitle);
+            this.labelProductName.Text = this.AssemblyProduct;
+            this.labelVersion.Text = string.Format("Version {0}", this.AssemblyVersion);
+            this.labelCopyright.Text = this.AssemblyCopyright;
+            this.labelCompanyName.Text = this.AssemblyCompany;
+            this.textBoxDescription.Text = this.AssemblyDescription;
+        }
 
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing && this.components != null)
-			{
-				this.components.Dispose();
-			}
-			base.Dispose(disposing);
-		}
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && this.components != null)
+            {
+                this.components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
 
-		private void InitializeComponent()
-		{
+        private void InitializeComponent()
+        {
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.labelProductName = new System.Windows.Forms.Label();
             this.labelVersion = new System.Windows.Forms.Label();
@@ -222,7 +221,7 @@ namespace MoggTools
             // 
             // okButton
             // 
-            this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.okButton.Anchor = (System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right);
             this.okButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.okButton.Location = new System.Drawing.Point(339, 239);
             this.okButton.Name = "okButton";
@@ -251,12 +250,12 @@ namespace MoggTools
             this.tableLayoutPanel.PerformLayout();
             this.ResumeLayout(false);
 
-		}
+        }
 
-		private void okButton_Click(object sender, EventArgs e)
-		{
-			base.Hide();
-			base.Dispose();
-		}
-	}
+        private void okButton_Click(object sender, EventArgs e)
+        {
+            base.Hide();
+            base.Dispose();
+        }
+    }
 }

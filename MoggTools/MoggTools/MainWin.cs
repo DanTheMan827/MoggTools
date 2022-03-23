@@ -9,484 +9,487 @@ using LibOrbisPkg.Util;
 using MidiCS;
 using MoggTools.Properties;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Configuration;
-using System.Drawing;
 using System.IO;
 using System.Reflection;
-using System.Resources;
-using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
 namespace MoggTools
 {
-	internal class MainWin : Form
-	{
-		private AbstractPackage pkg;
+    internal class MainWin : Form
+    {
+        private AbstractPackage pkg;
 
-		private static MainWin static_this;
+        private static MainWin static_this;
 
-		private SongListSorter sorter;
+        private SongListSorter sorter;
 
-		private IContainer components;
+        private IContainer components;
 
-		private StatusStrip statusStrip;
+        private StatusStrip statusStrip;
 
-		private MenuStrip menuStrip;
+        private MenuStrip menuStrip;
 
-		private ToolStripMenuItem fileToolStripMenuItem;
+        private ToolStripMenuItem fileToolStripMenuItem;
 
-		private ToolStripMenuItem exitToolStripMenuItem;
+        private ToolStripMenuItem exitToolStripMenuItem;
 
-		private ToolStripMenuItem toolsToolStripMenuItem;
+        private ToolStripMenuItem toolsToolStripMenuItem;
 
-		private ToolStripMenuItem helpToolStripMenuItem;
+        private ToolStripMenuItem helpToolStripMenuItem;
 
-		private ToolStripMenuItem aboutToolStripMenuItem;
+        private ToolStripMenuItem aboutToolStripMenuItem;
 
-		private ToolStripMenuItem decryptmoggToolStripMenuItem;
+        private ToolStripMenuItem decryptmoggToolStripMenuItem;
 
-		private ToolStripStatusLabel statusLabel;
+        private ToolStripStatusLabel statusLabel;
 
-		private Label label1;
+        private Label label1;
 
-		private TextBox logTextBox;
+        private TextBox logTextBox;
 
-		private Label label2;
+        private Label label2;
 
-		private System.Windows.Forms.ContextMenuStrip songListContextMenu;
+        private System.Windows.Forms.ContextMenuStrip songListContextMenu;
 
-		private Button checkAllBtn;
+        private Button checkAllBtn;
 
-		private Button invertCheckedBtn;
+        private Button invertCheckedBtn;
 
-		private Button extractCheckedMoggButton;
+        private Button extractCheckedMoggButton;
 
-		private Button decryptCheckedMoggButton;
+        private Button decryptCheckedMoggButton;
 
-		private ToolStripMenuItem optionsToolStripMenuItem;
+        private ToolStripMenuItem optionsToolStripMenuItem;
 
-		private ToolStripMenuItem renameToArtistSongName;
+        private ToolStripMenuItem renameToArtistSongName;
 
-		private ToolStripMenuItem createRPPToolStripMenuItem;
+        private ToolStripMenuItem createRPPToolStripMenuItem;
 
-		private Button createRppCheckedButton;
+        private Button createRppCheckedButton;
 
-		private ToolStripProgressBar workerProgressBar;
+        private ToolStripProgressBar workerProgressBar;
 
-		private ToolStripMenuItem batchToolStripMenuItem;
+        private ToolStripMenuItem batchToolStripMenuItem;
 
-		private ToolStripMenuItem extractMoggsFromCONLIVEInFolderToolStripMenuItem;
+        private ToolStripMenuItem extractMoggsFromCONLIVEInFolderToolStripMenuItem;
 
-		private ToolStripMenuItem createRPPsForAllCONLIVEInFolderToolStripMenuItem;
+        private ToolStripMenuItem createRPPsForAllCONLIVEInFolderToolStripMenuItem;
 
-		private PictureBox pictureBox1;
+        private PictureBox pictureBox1;
 
-		private PictureBox pictureBox2;
+        private PictureBox pictureBox2;
 
-		private ToolStripMenuItem unloadCurrentPackageToolStripMenuItem;
+        private ToolStripMenuItem unloadCurrentPackageToolStripMenuItem;
 
-		private ListView songListView;
+        private ListView songListView;
 
-		private ColumnHeader artistHeader;
+        private ColumnHeader artistHeader;
 
-		private ColumnHeader nameHeader;
+        private ColumnHeader nameHeader;
 
-		private ColumnHeader albumHeader;
+        private ColumnHeader albumHeader;
 
-		private ColumnHeader yearHeader;
+        private ColumnHeader yearHeader;
 
-		private ToolStripMenuItem openPackageToolStripMenuItem;
+        private ToolStripMenuItem openPackageToolStripMenuItem;
 
-		private ColumnHeader lengthHeader;
+        private ColumnHeader lengthHeader;
 
-		private Label songCountLabel;
+        private Label songCountLabel;
 
-		private Button uncheckAllBtn;
+        private Button uncheckAllBtn;
 
-		private GroupBox withCheckedGroupBox;
+        private GroupBox withCheckedGroupBox;
 
-		private ToolStripMenuItem saveTempoMapInRPP;
+        private ToolStripMenuItem saveTempoMapInRPP;
 
-		private ToolStripMenuItem saveMIDIDataInRPP;
+        private ToolStripMenuItem saveMIDIDataInRPP;
 
-		private ToolStripMenuItem showTutorialSongs;
+        private ToolStripMenuItem showTutorialSongs;
 
-		private Button extractCheckedDtasBtn;
+        private Button extractCheckedDtasBtn;
 
-		private Button extractCheckedMidisBtn;
+        private Button extractCheckedMidisBtn;
 
-		private ToolStripMenuItem decryptedToolStripMenuItem;
+        private ToolStripMenuItem decryptedToolStripMenuItem;
 
-		private ToolStripMenuItem extractSelectedDTAsToolStripMenuItem;
+        private ToolStripMenuItem extractSelectedDTAsToolStripMenuItem;
 
-		private ToolStripMenuItem extractSelectedmidsToolStripMenuItem;
-
-		private ToolStripMenuItem encryptedToolStripMenuItem;
-
-		private ToolStripMenuItem batchSaveDTAsToolStripMenuItem;
-
-		private ToolStripMenuItem batchSavemidsToolStripMenuItem;
-
-		private ToolStripMenuItem batchCreateRPPMoggsToolStripMenuItem;
-
-		public static string AppName
-		{
-			get;
-		}
-
-		static MainWin()
-		{
-			MainWin.AppName = string.Concat(new object[] { "MoggTools v", Assembly.GetEntryAssembly().GetName().Version.Major, ".", Assembly.GetEntryAssembly().GetName().Version.Minor });
-		}
-
-		public MainWin()
-		{
-			this.InitializeComponent();
-			this.sorter = new SongListSorter();
-			this.songListView.ListViewItemSorter = this.sorter;
-			this.songListView.FullRowSelect = true;
-			this.songListView.GetType().GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(this.songListView, true, null);
-			MainWin.static_this = this;
-			this.renameToArtistSongName.Checked = Settings.Default.RenameToArtistSongName;
-			this.saveMIDIDataInRPP.Checked = Settings.Default.SaveMidiDataInRPP;
-			this.saveTempoMapInRPP.Checked = Settings.Default.SaveTempoMapInRPP;
-			this.showTutorialSongs.Checked = Settings.Default.ShowTutorialSongs;
-			this.unloadPackage();
-		}
-
-		private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			(new AboutBox()).Show();
-		}
-
-		private void BatchCreateRPPMoggsToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			this.doBatch((BatchWindow w, string a, string b) => w.batchExtractMoggsAndRPPs(a, b), "Select output directory...");
-		}
-
-		private void batchCreateRPPs_Click(object sender, EventArgs e)
-		{
-			this.doBatch((BatchWindow w, string a, string b) => w.batchExtractRPPs(a, b), "Select RPP directory...");
-		}
-
-		private void batchExtractMoggs_Click(object sender, EventArgs e)
-		{
-			this.doBatch((BatchWindow w, string a, string b) => w.batchExtractMoggs(a, b), "Select mogg output directory...");
-		}
-
-		private void batchSaveDTAs_Click(object sender, EventArgs e)
-		{
-			this.doBatch((BatchWindow w, string a, string b) => w.batchSaveDTAs(a, b), "Select dta output directory...");
-		}
-
-		private void batchSavemMids_Click(object sender, EventArgs e)
-		{
-			this.doBatch((BatchWindow w, string a, string b) => w.batchExtractMids(a, b), "Select midi output directory...");
-		}
-
-		private void checkAllBtn_Click(object sender, EventArgs e)
-		{
-			for (int i = 0; i < this.songListView.Items.Count; i++)
-			{
-				this.songListView.Items[i].Checked = true;
-			}
-		}
-
-		private void createSelectedRPPs_Click(object sender, EventArgs e)
-		{
-			FolderSelectDialog folderSelectDialog = new FolderSelectDialog();
-			if (folderSelectDialog.ShowDialog())
-			{
-				this.DoForAllSelected((Song s) => {
-					Utils.SaveRpp(s, folderSelectDialog.FileName);
-					this.LogLn(string.Concat("Saved ", s.GetFileName(), ".rpp"));
-				});
-			}
-		}
-
-		private void DecryptAndExtract(Song s, string path)
-		{
-			string str = string.Concat(s.GetFileName(), ".mogg");
-			switch (Utils.SaveMogg(this.pkg.GetFile(string.Concat(s.Path, ".mogg")).GetStream(), Path.Combine(path, str), true))
-			{
-				case MoggCryptResult.ERR_DECRYPT_FAILED:
-				{
-					this.LogLn(string.Concat("Warning: Could not decrypt ", str, "."));
-					return;
-				}
-				case MoggCryptResult.ERR_ALREADY_DECRYPTED:
-				{
-					this.LogLn(string.Concat("Saved ", str, " (not encrypted)"));
-					return;
-				}
-				case MoggCryptResult.ERR_UNSUPPORTED_ENCRYPTION:
-				{
-					this.LogLn(string.Concat("Warning: Encryption for ", str, " not supported."));
-					return;
-				}
-				case MoggCryptResult.SUCCESS:
-				{
-					this.LogLn(string.Concat("Saved ", str));
-					return;
-				}
-				default:
-				{
-					return;
-				}
-			}
-		}
-
-		private void decryptCheckedMoggsBtn_Click(object sender, EventArgs e)
-		{
-			FolderSelectDialog folderSelectDialog = new FolderSelectDialog()
-			{
-				Title = "Select output directory for extracted moggs"
-			};
-			if (folderSelectDialog.ShowDialog())
-			{
-				this.DoForAllChecked((Song s) => this.DecryptAndExtract(s, folderSelectDialog.FileName));
-			}
-		}
-
-		private void decryptmoggToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			OpenFileDialog openFileDialog = new OpenFileDialog()
-			{
-				Title = "Select .mogg file...",
-				Filter = "mogg files (*.mogg)|*.mogg",
-				Multiselect = false
-			};
-			if (openFileDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
-			{
-				this.statusLabel.Text = "Decrypting mogg...";
-				this.LogLn(string.Concat("Loading ", openFileDialog.FileName, "..."));
-				this.Refresh();
-				byte[] numArray = File.ReadAllBytes(openFileDialog.FileName);
-				this.LogLn(string.Concat(new object[] { "Decrypting ", openFileDialog.FileName, "... (", (int)numArray.Length, " bytes)" }));
-				MoggCryptResult moggCryptResult = MoggCrypt.nativeDecrypt(numArray);
-				MoggCryptResult moggCryptResult1 = moggCryptResult;
-				if (moggCryptResult == MoggCryptResult.SUCCESS)
-				{
-					this.LogLn(string.Concat("Decrypted ", openFileDialog.FileName));
-					SaveFileDialog saveFileDialog = new SaveFileDialog()
-					{
-						Title = "Select output filename...",
-						Filter = "mogg files (*.mogg)|*.mogg"
-					};
-					if (saveFileDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
-					{
-						File.WriteAllBytes(saveFileDialog.FileName, numArray);
-						this.LogLn(string.Concat("Wrote decrypted mogg to ", saveFileDialog.FileName));
-					}
-				}
-				else if (moggCryptResult1 == MoggCryptResult.ERR_ALREADY_DECRYPTED)
-				{
-					this.LogLn("Error decrypting mogg: already decrypted.");
-				}
-				else if (moggCryptResult1 == MoggCryptResult.ERR_UNSUPPORTED_ENCRYPTION)
-				{
-					this.LogLn("Error decrypting mogg: unsupported encryption scheme.");
-				}
-				else if (moggCryptResult1 == MoggCryptResult.ERR_DECRYPT_FAILED)
-				{
-					this.LogLn("Error decrypting mogg: supported encryption scheme, but decrypted data was wrong.");
-				}
-			}
-			this.statusLabel.Text = "Ready";
-			this.Refresh();
-		}
-
-		private void decryptSelectedMoggs_Click(object sender, EventArgs e)
-		{
-			FolderSelectDialog folderSelectDialog = new FolderSelectDialog()
-			{
-				Title = "Select output directory for extracted moggs."
-			};
-			if (folderSelectDialog.ShowDialog())
-			{
-				this.DoForAllSelected((Song s) => this.DecryptAndExtract(s, folderSelectDialog.FileName));
-			}
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing && this.components != null)
-			{
-				this.components.Dispose();
-			}
-			base.Dispose(disposing);
-		}
-
-		private void doBatch(Action<BatchWindow, string, string> batchAction, string outPrompt)
-		{
-			FolderSelectDialog folderSelectDialog = new FolderSelectDialog()
-			{
-				Title = "Select content file directory..."
-			};
-			FolderSelectDialog folderSelectDialog1 = new FolderSelectDialog()
-			{
-				Title = outPrompt
-			};
-			if (folderSelectDialog.ShowDialog() && folderSelectDialog1.ShowDialog())
-			{
-				BatchWindow batchWindow = new BatchWindow();
-				batchWindow.Show();
-				batchAction(batchWindow, folderSelectDialog.FileName, folderSelectDialog1.FileName);
-			}
-		}
-
-		private void DoForAllChecked(Action<Song> work)
-		{
-			foreach (ListViewItem checkedItem in this.songListView.CheckedItems)
-			{
-				work(checkedItem.Tag as Song);
-			}
-		}
-
-		private void DoForAllSelected(Action<Song> work)
-		{
-			foreach (ListViewItem selectedItem in this.songListView.SelectedItems)
-			{
-				work(selectedItem.Tag as Song);
-			}
-		}
-
-		private void EnableAll()
-		{
-			this.songListView.Enabled = true;
-			this.createRppCheckedButton.Enabled = true;
-			this.extractCheckedMoggButton.Enabled = true;
-			this.decryptCheckedMoggButton.Enabled = true;
-			this.extractCheckedMidisBtn.Enabled = true;
-			this.extractCheckedDtasBtn.Enabled = true;
-			this.unloadCurrentPackageToolStripMenuItem.Enabled = true;
-			this.checkAllBtn.Enabled = true;
-			this.uncheckAllBtn.Enabled = true;
-			this.invertCheckedBtn.Enabled = true;
-			this.Text = string.Concat(MainWin.AppName, " - ", this.pkg.FileName);
-		}
-
-		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			Application.Exit();
-		}
-
-		private void extractCheckedDtasBtn_Click(object sender, EventArgs e)
-		{
-			FolderSelectDialog folderSelectDialog = new FolderSelectDialog();
-			if (folderSelectDialog.ShowDialog())
-			{
-				this.DoForAllChecked((Song s) => {
-					Utils.SaveDTA(s, folderSelectDialog.FileName);
-					this.LogLn(string.Concat("Saved ", s.GetFileName(), ".dta"));
-				});
-			}
-		}
-
-		private void extractCheckedMidisBtn_Click(object sender, EventArgs e)
-		{
-			FolderSelectDialog folderSelectDialog = new FolderSelectDialog();
-			if (folderSelectDialog.ShowDialog())
-			{
-				this.DoForAllChecked((Song s) => {
-					Util.ExtractTo(this.pkg.GetFile(string.Concat(s.Path, ".mid")), Path.Combine(folderSelectDialog.FileName, string.Concat(s.GetFileName(), ".mid")));
-					this.LogLn(string.Concat("Saved ", s.GetFileName(), ".mid"));
-				});
-			}
-		}
-
-		private void extractCheckedMoggsBtn_Click(object sender, EventArgs e)
-		{
-			FolderSelectDialog folderSelectDialog = new FolderSelectDialog()
-			{
-				Title = "Select output directory for extracted moggs"
-			};
-			if (folderSelectDialog.ShowDialog())
-			{
-				this.DoForAllChecked((Song s) => {
-					string str = string.Concat(s.GetFileName(), ".mogg");
-					Utils.SaveMogg(this.pkg.GetFile(string.Concat(s.Path, ".mogg")).GetStream(), Path.Combine(folderSelectDialog.FileName, str), false);
-					MainWin.LogLn_(string.Concat("Saved ", str));
-				});
-			}
-		}
-
-		private void extractCheckedRPPsBtn_Click(object sender, EventArgs e)
-		{
-			FolderSelectDialog folderSelectDialog = new FolderSelectDialog();
-			if (folderSelectDialog.ShowDialog())
-			{
-				this.DoForAllChecked((Song s) => {
-					Utils.SaveRpp(s, folderSelectDialog.FileName);
-					this.LogLn(string.Concat("Saved ", s.GetFileName(), ".rpp"));
-				});
-			}
-		}
-
-		private void extractSelectedDTAs_Click(object sender, EventArgs e)
-		{
-			FolderSelectDialog folderSelectDialog = new FolderSelectDialog();
-			if (folderSelectDialog.ShowDialog())
-			{
-				this.DoForAllSelected((Song s) => {
-					Utils.SaveDTA(s, folderSelectDialog.FileName);
-					this.LogLn(string.Concat("Saved ", s.GetFileName(), ".dta"));
-				});
-			}
-		}
-
-		private void extractSelectedmids_Click(object sender, EventArgs e)
-		{
-			FolderSelectDialog folderSelectDialog = new FolderSelectDialog();
-			if (folderSelectDialog.ShowDialog())
-			{
-				this.DoForAllSelected((Song s) => {
-					Util.ExtractTo(this.pkg.GetFile(string.Concat(s.Path, ".mid")), Path.Combine(folderSelectDialog.FileName, string.Concat(s.GetFileName(), ".mid")));
-					this.LogLn(string.Concat("Saved ", s.GetFileName(), ".mid"));
-				});
-			}
-		}
-
-		private void extractSelectedMoggs_Click(object sender, EventArgs e)
-		{
-			FolderSelectDialog folderSelectDialog = new FolderSelectDialog()
-			{
-				Title = "Select output directory for extracted moggs."
-			};
-			if (folderSelectDialog.ShowDialog())
-			{
-				this.DoForAllSelected((Song s) => {
-					string str = string.Concat(s.GetFileName(), ".mogg");
-					Utils.SaveMogg(this.pkg.GetFile(string.Concat(s.Path, ".mogg")).GetStream(), Path.Combine(folderSelectDialog.FileName, str), false);
-					MainWin.LogLn_(string.Concat("Saved ", str));
-				});
-			}
-		}
-
-		private void FileDragDrop(object sender, DragEventArgs e)
-		{
-			if ((int)((string[])e.Data.GetData(DataFormats.FileDrop)).Length > 1)
-			{
-				this.LogLn("Please only drop one file at a time. Support for multiple drops may be added in the future.");
-				return;
-			}
-			string data = ((string[])e.Data.GetData(DataFormats.FileDrop))[0];
-			this.LoadFile(data);
-		}
-
-		private void FileDragEnter(object sender, DragEventArgs e)
-		{
-			if (e.Data.GetDataPresent(DataFormats.FileDrop))
-			{
-				e.Effect = DragDropEffects.Copy;
-			}
-		}
-
-		private void InitializeComponent()
-		{
+        private ToolStripMenuItem extractSelectedmidsToolStripMenuItem;
+
+        private ToolStripMenuItem encryptedToolStripMenuItem;
+
+        private ToolStripMenuItem batchSaveDTAsToolStripMenuItem;
+
+        private ToolStripMenuItem batchSavemidsToolStripMenuItem;
+
+        private ToolStripMenuItem batchCreateRPPMoggsToolStripMenuItem;
+
+        public static string AppName
+        {
+            get;
+        }
+
+        static MainWin()
+        {
+            MainWin.AppName = string.Concat(new object[] { "MoggTools v", Assembly.GetEntryAssembly().GetName().Version.Major, ".", Assembly.GetEntryAssembly().GetName().Version.Minor });
+        }
+
+        public MainWin()
+        {
+            this.InitializeComponent();
+            this.sorter = new SongListSorter();
+            this.songListView.ListViewItemSorter = this.sorter;
+            this.songListView.FullRowSelect = true;
+            this.songListView.GetType().GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(this.songListView, true, null);
+            MainWin.static_this = this;
+            this.renameToArtistSongName.Checked = Settings.Default.RenameToArtistSongName;
+            this.saveMIDIDataInRPP.Checked = Settings.Default.SaveMidiDataInRPP;
+            this.saveTempoMapInRPP.Checked = Settings.Default.SaveTempoMapInRPP;
+            this.showTutorialSongs.Checked = Settings.Default.ShowTutorialSongs;
+            this.unloadPackage();
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            (new AboutBox()).Show();
+        }
+
+        private void BatchCreateRPPMoggsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.doBatch((BatchWindow w, string a, string b) => w.batchExtractMoggsAndRPPs(a, b), "Select output directory...");
+        }
+
+        private void batchCreateRPPs_Click(object sender, EventArgs e)
+        {
+            this.doBatch((BatchWindow w, string a, string b) => w.batchExtractRPPs(a, b), "Select RPP directory...");
+        }
+
+        private void batchExtractMoggs_Click(object sender, EventArgs e)
+        {
+            this.doBatch((BatchWindow w, string a, string b) => w.batchExtractMoggs(a, b), "Select mogg output directory...");
+        }
+
+        private void batchSaveDTAs_Click(object sender, EventArgs e)
+        {
+            this.doBatch((BatchWindow w, string a, string b) => w.batchSaveDTAs(a, b), "Select dta output directory...");
+        }
+
+        private void batchSavemMids_Click(object sender, EventArgs e)
+        {
+            this.doBatch((BatchWindow w, string a, string b) => w.batchExtractMids(a, b), "Select midi output directory...");
+        }
+
+        private void checkAllBtn_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < this.songListView.Items.Count; i++)
+            {
+                this.songListView.Items[i].Checked = true;
+            }
+        }
+
+        private void createSelectedRPPs_Click(object sender, EventArgs e)
+        {
+            FolderSelectDialog folderSelectDialog = new FolderSelectDialog();
+            if (folderSelectDialog.ShowDialog())
+            {
+                this.DoForAllSelected((Song s) =>
+                {
+                    Utils.SaveRpp(s, folderSelectDialog.FileName);
+                    this.LogLn(string.Concat("Saved ", s.GetFileName(), ".rpp"));
+                });
+            }
+        }
+
+        private void DecryptAndExtract(Song s, string path)
+        {
+            string str = string.Concat(s.GetFileName(), ".mogg");
+            switch (Utils.SaveMogg(this.pkg.GetFile(string.Concat(s.Path, ".mogg")).GetStream(), Path.Combine(path, str), true))
+            {
+                case MoggCryptResult.ERR_DECRYPT_FAILED:
+                    {
+                        this.LogLn(string.Concat("Warning: Could not decrypt ", str, "."));
+                        return;
+                    }
+                case MoggCryptResult.ERR_ALREADY_DECRYPTED:
+                    {
+                        this.LogLn(string.Concat("Saved ", str, " (not encrypted)"));
+                        return;
+                    }
+                case MoggCryptResult.ERR_UNSUPPORTED_ENCRYPTION:
+                    {
+                        this.LogLn(string.Concat("Warning: Encryption for ", str, " not supported."));
+                        return;
+                    }
+                case MoggCryptResult.SUCCESS:
+                    {
+                        this.LogLn(string.Concat("Saved ", str));
+                        return;
+                    }
+                default:
+                    {
+                        return;
+                    }
+            }
+        }
+
+        private void decryptCheckedMoggsBtn_Click(object sender, EventArgs e)
+        {
+            FolderSelectDialog folderSelectDialog = new FolderSelectDialog()
+            {
+                Title = "Select output directory for extracted moggs"
+            };
+            if (folderSelectDialog.ShowDialog())
+            {
+                this.DoForAllChecked((Song s) => this.DecryptAndExtract(s, folderSelectDialog.FileName));
+            }
+        }
+
+        private void decryptmoggToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog()
+            {
+                Title = "Select .mogg file...",
+                Filter = "mogg files (*.mogg)|*.mogg",
+                Multiselect = false
+            };
+            if (openFileDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
+            {
+                this.statusLabel.Text = "Decrypting mogg...";
+                this.LogLn(string.Concat("Loading ", openFileDialog.FileName, "..."));
+                this.Refresh();
+                byte[] numArray = File.ReadAllBytes(openFileDialog.FileName);
+                this.LogLn(string.Concat(new object[] { "Decrypting ", openFileDialog.FileName, "... (", numArray.Length, " bytes)" }));
+                MoggCryptResult moggCryptResult = MoggCrypt.nativeDecrypt(numArray);
+                MoggCryptResult moggCryptResult1 = moggCryptResult;
+                if (moggCryptResult == MoggCryptResult.SUCCESS)
+                {
+                    this.LogLn(string.Concat("Decrypted ", openFileDialog.FileName));
+                    SaveFileDialog saveFileDialog = new SaveFileDialog()
+                    {
+                        Title = "Select output filename...",
+                        Filter = "mogg files (*.mogg)|*.mogg"
+                    };
+                    if (saveFileDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
+                    {
+                        File.WriteAllBytes(saveFileDialog.FileName, numArray);
+                        this.LogLn(string.Concat("Wrote decrypted mogg to ", saveFileDialog.FileName));
+                    }
+                }
+                else if (moggCryptResult1 == MoggCryptResult.ERR_ALREADY_DECRYPTED)
+                {
+                    this.LogLn("Error decrypting mogg: already decrypted.");
+                }
+                else if (moggCryptResult1 == MoggCryptResult.ERR_UNSUPPORTED_ENCRYPTION)
+                {
+                    this.LogLn("Error decrypting mogg: unsupported encryption scheme.");
+                }
+                else if (moggCryptResult1 == MoggCryptResult.ERR_DECRYPT_FAILED)
+                {
+                    this.LogLn("Error decrypting mogg: supported encryption scheme, but decrypted data was wrong.");
+                }
+            }
+            this.statusLabel.Text = "Ready";
+            this.Refresh();
+        }
+
+        private void decryptSelectedMoggs_Click(object sender, EventArgs e)
+        {
+            FolderSelectDialog folderSelectDialog = new FolderSelectDialog()
+            {
+                Title = "Select output directory for extracted moggs."
+            };
+            if (folderSelectDialog.ShowDialog())
+            {
+                this.DoForAllSelected((Song s) => this.DecryptAndExtract(s, folderSelectDialog.FileName));
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && this.components != null)
+            {
+                this.components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        private void doBatch(Action<BatchWindow, string, string> batchAction, string outPrompt)
+        {
+            FolderSelectDialog folderSelectDialog = new FolderSelectDialog()
+            {
+                Title = "Select content file directory..."
+            };
+            FolderSelectDialog folderSelectDialog1 = new FolderSelectDialog()
+            {
+                Title = outPrompt
+            };
+            if (folderSelectDialog.ShowDialog() && folderSelectDialog1.ShowDialog())
+            {
+                BatchWindow batchWindow = new BatchWindow();
+                batchWindow.Show();
+                batchAction(batchWindow, folderSelectDialog.FileName, folderSelectDialog1.FileName);
+            }
+        }
+
+        private void DoForAllChecked(Action<Song> work)
+        {
+            foreach (ListViewItem checkedItem in this.songListView.CheckedItems)
+            {
+                work(checkedItem.Tag as Song);
+            }
+        }
+
+        private void DoForAllSelected(Action<Song> work)
+        {
+            foreach (ListViewItem selectedItem in this.songListView.SelectedItems)
+            {
+                work(selectedItem.Tag as Song);
+            }
+        }
+
+        private void EnableAll()
+        {
+            this.songListView.Enabled = true;
+            this.createRppCheckedButton.Enabled = true;
+            this.extractCheckedMoggButton.Enabled = true;
+            this.decryptCheckedMoggButton.Enabled = true;
+            this.extractCheckedMidisBtn.Enabled = true;
+            this.extractCheckedDtasBtn.Enabled = true;
+            this.unloadCurrentPackageToolStripMenuItem.Enabled = true;
+            this.checkAllBtn.Enabled = true;
+            this.uncheckAllBtn.Enabled = true;
+            this.invertCheckedBtn.Enabled = true;
+            this.Text = string.Concat(MainWin.AppName, " - ", this.pkg.FileName);
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void extractCheckedDtasBtn_Click(object sender, EventArgs e)
+        {
+            FolderSelectDialog folderSelectDialog = new FolderSelectDialog();
+            if (folderSelectDialog.ShowDialog())
+            {
+                this.DoForAllChecked((Song s) =>
+                {
+                    Utils.SaveDTA(s, folderSelectDialog.FileName);
+                    this.LogLn(string.Concat("Saved ", s.GetFileName(), ".dta"));
+                });
+            }
+        }
+
+        private void extractCheckedMidisBtn_Click(object sender, EventArgs e)
+        {
+            FolderSelectDialog folderSelectDialog = new FolderSelectDialog();
+            if (folderSelectDialog.ShowDialog())
+            {
+                this.DoForAllChecked((Song s) =>
+                {
+                    Util.ExtractTo(this.pkg.GetFile(string.Concat(s.Path, ".mid")), Path.Combine(folderSelectDialog.FileName, string.Concat(s.GetFileName(), ".mid")));
+                    this.LogLn(string.Concat("Saved ", s.GetFileName(), ".mid"));
+                });
+            }
+        }
+
+        private void extractCheckedMoggsBtn_Click(object sender, EventArgs e)
+        {
+            FolderSelectDialog folderSelectDialog = new FolderSelectDialog()
+            {
+                Title = "Select output directory for extracted moggs"
+            };
+            if (folderSelectDialog.ShowDialog())
+            {
+                this.DoForAllChecked((Song s) =>
+                {
+                    string str = string.Concat(s.GetFileName(), ".mogg");
+                    Utils.SaveMogg(this.pkg.GetFile(string.Concat(s.Path, ".mogg")).GetStream(), Path.Combine(folderSelectDialog.FileName, str), false);
+                    MainWin.LogLn_(string.Concat("Saved ", str));
+                });
+            }
+        }
+
+        private void extractCheckedRPPsBtn_Click(object sender, EventArgs e)
+        {
+            FolderSelectDialog folderSelectDialog = new FolderSelectDialog();
+            if (folderSelectDialog.ShowDialog())
+            {
+                this.DoForAllChecked((Song s) =>
+                {
+                    Utils.SaveRpp(s, folderSelectDialog.FileName);
+                    this.LogLn(string.Concat("Saved ", s.GetFileName(), ".rpp"));
+                });
+            }
+        }
+
+        private void extractSelectedDTAs_Click(object sender, EventArgs e)
+        {
+            FolderSelectDialog folderSelectDialog = new FolderSelectDialog();
+            if (folderSelectDialog.ShowDialog())
+            {
+                this.DoForAllSelected((Song s) =>
+                {
+                    Utils.SaveDTA(s, folderSelectDialog.FileName);
+                    this.LogLn(string.Concat("Saved ", s.GetFileName(), ".dta"));
+                });
+            }
+        }
+
+        private void extractSelectedmids_Click(object sender, EventArgs e)
+        {
+            FolderSelectDialog folderSelectDialog = new FolderSelectDialog();
+            if (folderSelectDialog.ShowDialog())
+            {
+                this.DoForAllSelected((Song s) =>
+                {
+                    Util.ExtractTo(this.pkg.GetFile(string.Concat(s.Path, ".mid")), Path.Combine(folderSelectDialog.FileName, string.Concat(s.GetFileName(), ".mid")));
+                    this.LogLn(string.Concat("Saved ", s.GetFileName(), ".mid"));
+                });
+            }
+        }
+
+        private void extractSelectedMoggs_Click(object sender, EventArgs e)
+        {
+            FolderSelectDialog folderSelectDialog = new FolderSelectDialog()
+            {
+                Title = "Select output directory for extracted moggs."
+            };
+            if (folderSelectDialog.ShowDialog())
+            {
+                this.DoForAllSelected((Song s) =>
+                {
+                    string str = string.Concat(s.GetFileName(), ".mogg");
+                    Utils.SaveMogg(this.pkg.GetFile(string.Concat(s.Path, ".mogg")).GetStream(), Path.Combine(folderSelectDialog.FileName, str), false);
+                    MainWin.LogLn_(string.Concat("Saved ", str));
+                });
+            }
+        }
+
+        private void FileDragDrop(object sender, DragEventArgs e)
+        {
+            if (((string[])e.Data.GetData(DataFormats.FileDrop)).Length > 1)
+            {
+                this.LogLn("Please only drop one file at a time. Support for multiple drops may be added in the future.");
+                return;
+            }
+            string data = ((string[])e.Data.GetData(DataFormats.FileDrop))[0];
+            this.LoadFile(data);
+        }
+
+        private void FileDragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+        }
+
+        private void InitializeComponent()
+        {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWin));
             this.statusStrip = new System.Windows.Forms.StatusStrip();
@@ -529,11 +532,11 @@ namespace MoggTools
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.songListView = new System.Windows.Forms.ListView();
-            this.nameHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.artistHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.albumHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.yearHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.lengthHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.nameHeader = new System.Windows.Forms.ColumnHeader();
+            this.artistHeader = new System.Windows.Forms.ColumnHeader();
+            this.albumHeader = new System.Windows.Forms.ColumnHeader();
+            this.yearHeader = new System.Windows.Forms.ColumnHeader();
+            this.lengthHeader = new System.Windows.Forms.ColumnHeader();
             this.songCountLabel = new System.Windows.Forms.Label();
             this.uncheckAllBtn = new System.Windows.Forms.Button();
             this.withCheckedGroupBox = new System.Windows.Forms.GroupBox();
@@ -747,7 +750,7 @@ namespace MoggTools
             // 
             // label1
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label1.Anchor = (System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left);
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(9, 358);
             this.label1.Name = "label1";
@@ -757,8 +760,8 @@ namespace MoggTools
             // 
             // logTextBox
             // 
-            this.logTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.logTextBox.Anchor = ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right);
             this.logTextBox.Location = new System.Drawing.Point(12, 374);
             this.logTextBox.Multiline = true;
             this.logTextBox.Name = "logTextBox";
@@ -824,7 +827,7 @@ namespace MoggTools
             // 
             // checkAllBtn
             // 
-            this.checkAllBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.checkAllBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
             this.checkAllBtn.Location = new System.Drawing.Point(163, 43);
             this.checkAllBtn.Name = "checkAllBtn";
             this.checkAllBtn.Size = new System.Drawing.Size(60, 23);
@@ -835,7 +838,7 @@ namespace MoggTools
             // 
             // invertCheckedBtn
             // 
-            this.invertCheckedBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.invertCheckedBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
             this.invertCheckedBtn.Location = new System.Drawing.Point(163, 70);
             this.invertCheckedBtn.Name = "invertCheckedBtn";
             this.invertCheckedBtn.Size = new System.Drawing.Size(140, 23);
@@ -896,9 +899,9 @@ namespace MoggTools
             // songListView
             // 
             this.songListView.AllowColumnReorder = true;
-            this.songListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.songListView.Anchor = (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right);
             this.songListView.CheckBoxes = true;
             this.songListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.nameHeader,
@@ -953,7 +956,7 @@ namespace MoggTools
             // 
             // uncheckAllBtn
             // 
-            this.uncheckAllBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.uncheckAllBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
             this.uncheckAllBtn.Location = new System.Drawing.Point(229, 43);
             this.uncheckAllBtn.Name = "uncheckAllBtn";
             this.uncheckAllBtn.Size = new System.Drawing.Size(74, 23);
@@ -1034,372 +1037,372 @@ namespace MoggTools
             this.ResumeLayout(false);
             this.PerformLayout();
 
-		}
+        }
 
-		private void invertCheckedBtn_Click(object sender, EventArgs e)
-		{
-			for (int i = 0; i < this.songListView.Items.Count; i++)
-			{
-				this.songListView.Items[i].Checked = !this.songListView.Items[i].Checked;
-			}
-		}
+        private void invertCheckedBtn_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < this.songListView.Items.Count; i++)
+            {
+                this.songListView.Items[i].Checked = !this.songListView.Items[i].Checked;
+            }
+        }
 
-		private void LoadArk(IFile file)
-		{
-			IDirectory directory = null;
-			DataArray dataArray;
-			this.unloadPackage();
-			this.LogLn(string.Concat("Loading ark package ", file.Name));
-			try
-			{
-				this.pkg = PackageReader.ReadPackageFromFile(file);
-				string[] strArrays = new string[] { "pc", "ps4" };
-				int num = 0;
-				while (num < (int)strArrays.Length)
-				{
-					string str = strArrays[num];
-					if (!this.pkg.RootDirectory.TryGetDirectory(str, out directory))
-					{
-						num++;
-					}
-					else
-					{
-						try
-						{
-							this.PopulateListView(Utils.LoadSongsForge(directory, str));
-							return;
-						}
-						catch (Exception exception1)
-						{
-							Exception exception = exception1;
-							this.LogLn("Unable to load forge ark.");
-							this.LogLn(exception.StackTrace);
-							return;
-						}
-					}
-				}
-				if (!this.pkg.RootDirectory.TryGetDirectory("sce_sys", out directory))
-				{
-					try
-					{
-						using (Stream stream = this.pkg.GetFile("songs/gen/songs.dtb").GetStream())
-						{
-							dataArray = DTX.FromDtb(stream);
-						}
-						this.PopulateListView(Utils.LoadSongs(dataArray, this.pkg));
-					}
-					catch (FileNotFoundException fileNotFoundException)
-					{
-						this.LogLn("Unable to load ark; could not find songs.dtb");
-					}
-				}
-				else
-				{
-					try
-					{
-						this.PopulateListView(Utils.LoadSongsForge(this.pkg.RootDirectory, "ps4"));
-					}
-					catch (Exception exception3)
-					{
-						Exception exception2 = exception3;
-						this.LogLn("Unable to load PS4 DLC.");
-						this.LogLn(exception2.StackTrace);
-					}
-				}
-			}
-			catch (FileNotFoundException fileNotFoundException1)
-			{
-				this.LogLn(string.Concat("Couldn't load ark; matching content file not found: ", fileNotFoundException1.FileName));
-			}
-			catch (Exception exception5)
-			{
-				Exception exception4 = exception5;
-				this.LogLn(string.Concat("Got unexpected exception when trying to load ark package: ", exception4.Message));
-				this.LogLn(exception4.StackTrace);
-			}
-		}
+        private void LoadArk(IFile file)
+        {
+            IDirectory directory = null;
+            DataArray dataArray;
+            this.unloadPackage();
+            this.LogLn(string.Concat("Loading ark package ", file.Name));
+            try
+            {
+                this.pkg = PackageReader.ReadPackageFromFile(file);
+                string[] strArrays = new string[] { "pc", "ps4" };
+                int num = 0;
+                while (num < strArrays.Length)
+                {
+                    string str = strArrays[num];
+                    if (!this.pkg.RootDirectory.TryGetDirectory(str, out directory))
+                    {
+                        num++;
+                    }
+                    else
+                    {
+                        try
+                        {
+                            this.PopulateListView(Utils.LoadSongsForge(directory, str));
+                            return;
+                        }
+                        catch (Exception exception1)
+                        {
+                            Exception exception = exception1;
+                            this.LogLn("Unable to load forge ark.");
+                            this.LogLn(exception.StackTrace);
+                            return;
+                        }
+                    }
+                }
+                if (!this.pkg.RootDirectory.TryGetDirectory("sce_sys", out directory))
+                {
+                    try
+                    {
+                        using (Stream stream = this.pkg.GetFile("songs/gen/songs.dtb").GetStream())
+                        {
+                            dataArray = DTX.FromDtb(stream);
+                        }
+                        this.PopulateListView(Utils.LoadSongs(dataArray, this.pkg));
+                    }
+                    catch (FileNotFoundException fileNotFoundException)
+                    {
+                        this.LogLn("Unable to load ark; could not find songs.dtb");
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        this.PopulateListView(Utils.LoadSongsForge(this.pkg.RootDirectory, "ps4"));
+                    }
+                    catch (Exception exception3)
+                    {
+                        Exception exception2 = exception3;
+                        this.LogLn("Unable to load PS4 DLC.");
+                        this.LogLn(exception2.StackTrace);
+                    }
+                }
+            }
+            catch (FileNotFoundException fileNotFoundException1)
+            {
+                this.LogLn(string.Concat("Couldn't load ark; matching content file not found: ", fileNotFoundException1.FileName));
+            }
+            catch (Exception exception5)
+            {
+                Exception exception4 = exception5;
+                this.LogLn(string.Concat("Got unexpected exception when trying to load ark package: ", exception4.Message));
+                this.LogLn(exception4.StackTrace);
+            }
+        }
 
-		private void LoadFile(string dropFile)
-		{
-			MoggCryptResult moggCryptResult;
-			DataArray dataArray;
-			IFile file = Util.LocalFile(dropFile);
-			if (STFSPackage.IsSTFS(file) == PackageTestResult.YES)
-			{
-				this.LoadSTFS(file);
-				return;
-			}
-			if (ArkPackage.IsArk(file) >= PackageTestResult.MAYBE || file.Name.EndsWith("dat"))
-			{
-				this.LoadArk(file);
-				return;
-			}
-			if (Path.GetExtension(dropFile).ToLower() == ".mogg")
-			{
-				this.LogLn("Decrypting dropped mogg file...");
-				try
-				{
-					SaveFileDialog saveFileDialog = new SaveFileDialog()
-					{
-						Title = "Choose output filename."
-					};
-					SaveFileDialog saveFileDialog1 = saveFileDialog;
-					saveFileDialog1.Filter = string.Concat(saveFileDialog1.Filter, "Mogg Files (*.mogg)|*.mogg");
-					saveFileDialog.InitialDirectory = Path.GetDirectoryName(dropFile);
-					saveFileDialog.FileName = Path.GetFileName(dropFile);
-					if (saveFileDialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)
-					{
-						this.LogLn("Decryption cancelled.");
-					}
-					else
-					{
-						using (Stream fileStream = new FileStream(dropFile, FileMode.Open))
-						{
-							moggCryptResult = Utils.SaveMogg(fileStream, saveFileDialog.FileName, true);
-						}
-						if (moggCryptResult == MoggCryptResult.ERR_DECRYPT_FAILED || moggCryptResult == MoggCryptResult.ERR_UNSUPPORTED_ENCRYPTION)
-						{
-							this.LogLn("Error decrypting dropped mogg.");
-						}
-					}
-				}
-				catch (Exception exception1)
-				{
-					Exception exception = exception1;
-					this.LogLn(exception.Message);
-					this.LogLn(exception.StackTrace);
-				}
-			}
-			else if (Path.GetExtension(dropFile).ToLower() == ".dta")
-			{
-				try
-				{
-					using (FileStream fileStream1 = new FileStream(dropFile, FileMode.Open, FileAccess.Read))
-					{
-						//dataArray = DTX.FromPlainTextBytes(fileStream1.ReadBytes((long)((int)fileStream1.Length)));
-						dataArray = DTX.FromPlainTextBytes(fileStream1.ReadBytes((int)fileStream1.Length));
-					}
-					Song[] song = new Song[dataArray.Count];
-					for (int i = 0; i < dataArray.Count; i++)
-					{
-						song[i] = new Song(dataArray.Array(i), null);
-					}
-					FolderSelectDialog folderSelectDialog = new FolderSelectDialog()
-					{
-						Title = "Select output folder for RPPs.",
-						InitialDirectory = Path.GetDirectoryName(dropFile)
-					};
-					if (folderSelectDialog.ShowDialog())
-					{
-						Song[] songArray = song;
-						for (int j = 0; j < (int)songArray.Length; j++)
-						{
-							Utils.SaveRpp(songArray[j], folderSelectDialog.FileName);
-						}
-					}
-				}
-				catch (Exception exception2)
-				{
-					this.LogLn("Error making RPPs from dropped dta.");
-				}
-			}
-			else if (Path.GetExtension(dropFile).ToLower() != ".mid")
-			{
-				this.LogLn("File was not an STFS archive, DTA file, Ark .hdr file or .mogg file.");
-			}
-			else
-			{
-				using (FileStream fileStream2 = new FileStream(dropFile, FileMode.Open, FileAccess.Read))
-				{
-					MidiFile midiFile = MidiFileReader.FromStream(fileStream2);
-					this.LogLn(string.Concat("New midi file dropped, duration ", midiFile.Duration));
-				}
-			}
-		}
+        private void LoadFile(string dropFile)
+        {
+            MoggCryptResult moggCryptResult;
+            DataArray dataArray;
+            IFile file = Util.LocalFile(dropFile);
+            if (STFSPackage.IsSTFS(file) == PackageTestResult.YES)
+            {
+                this.LoadSTFS(file);
+                return;
+            }
+            if (ArkPackage.IsArk(file) >= PackageTestResult.MAYBE || file.Name.EndsWith("dat"))
+            {
+                this.LoadArk(file);
+                return;
+            }
+            if (Path.GetExtension(dropFile).ToLower() == ".mogg")
+            {
+                this.LogLn("Decrypting dropped mogg file...");
+                try
+                {
+                    SaveFileDialog saveFileDialog = new SaveFileDialog()
+                    {
+                        Title = "Choose output filename."
+                    };
+                    SaveFileDialog saveFileDialog1 = saveFileDialog;
+                    saveFileDialog1.Filter = string.Concat(saveFileDialog1.Filter, "Mogg Files (*.mogg)|*.mogg");
+                    saveFileDialog.InitialDirectory = Path.GetDirectoryName(dropFile);
+                    saveFileDialog.FileName = Path.GetFileName(dropFile);
+                    if (saveFileDialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+                    {
+                        this.LogLn("Decryption cancelled.");
+                    }
+                    else
+                    {
+                        using (Stream fileStream = new FileStream(dropFile, FileMode.Open))
+                        {
+                            moggCryptResult = Utils.SaveMogg(fileStream, saveFileDialog.FileName, true);
+                        }
+                        if (moggCryptResult == MoggCryptResult.ERR_DECRYPT_FAILED || moggCryptResult == MoggCryptResult.ERR_UNSUPPORTED_ENCRYPTION)
+                        {
+                            this.LogLn("Error decrypting dropped mogg.");
+                        }
+                    }
+                }
+                catch (Exception exception1)
+                {
+                    Exception exception = exception1;
+                    this.LogLn(exception.Message);
+                    this.LogLn(exception.StackTrace);
+                }
+            }
+            else if (Path.GetExtension(dropFile).ToLower() == ".dta")
+            {
+                try
+                {
+                    using (FileStream fileStream1 = new FileStream(dropFile, FileMode.Open, FileAccess.Read))
+                    {
+                        //dataArray = DTX.FromPlainTextBytes(fileStream1.ReadBytes((long)((int)fileStream1.Length)));
+                        dataArray = DTX.FromPlainTextBytes(fileStream1.ReadBytes((int)fileStream1.Length));
+                    }
+                    Song[] song = new Song[dataArray.Count];
+                    for (int i = 0; i < dataArray.Count; i++)
+                    {
+                        song[i] = new Song(dataArray.Array(i), null);
+                    }
+                    FolderSelectDialog folderSelectDialog = new FolderSelectDialog()
+                    {
+                        Title = "Select output folder for RPPs.",
+                        InitialDirectory = Path.GetDirectoryName(dropFile)
+                    };
+                    if (folderSelectDialog.ShowDialog())
+                    {
+                        Song[] songArray = song;
+                        for (int j = 0; j < songArray.Length; j++)
+                        {
+                            Utils.SaveRpp(songArray[j], folderSelectDialog.FileName);
+                        }
+                    }
+                }
+                catch (Exception exception2)
+                {
+                    this.LogLn("Error making RPPs from dropped dta.");
+                }
+            }
+            else if (Path.GetExtension(dropFile).ToLower() != ".mid")
+            {
+                this.LogLn("File was not an STFS archive, DTA file, Ark .hdr file or .mogg file.");
+            }
+            else
+            {
+                using (FileStream fileStream2 = new FileStream(dropFile, FileMode.Open, FileAccess.Read))
+                {
+                    MidiFile midiFile = MidiFileReader.FromStream(fileStream2);
+                    this.LogLn(string.Concat("New midi file dropped, duration ", midiFile.Duration));
+                }
+            }
+        }
 
-		private void LoadSTFS(IFile file)
-		{
-			this.unloadPackage();
-			this.pkg = STFSPackage.OpenFile(file);
-			STFSPackage sTFSPackage = (STFSPackage)this.pkg;
-			this.pictureBox1.Image = sTFSPackage.Thumbnail;
-			this.pictureBox2.Image = sTFSPackage.TitleThumbnail;
-			this.LogLn(string.Concat("Loading songs from '", this.pkg.FileName, "'..."));
-			this.statusLabel.Text = "Loading...";
-			try
-			{
-				DataArray dataArray = DTX.FromPlainTextBytes(this.pkg.GetFile("songs/songs.dta").GetBytes());
-				try
-				{
-					this.PopulateListView(Utils.LoadSongs(dataArray, this.pkg));
-				}
-				catch (Exception exception)
-				{
-					this.LogLn(string.Concat("Error loading songs from pack: ", exception.Message));
-				}
-			}
-			catch (Exception exception1)
-			{
-				this.LogLn("Error loading songs.dta!");
-			}
-		}
+        private void LoadSTFS(IFile file)
+        {
+            this.unloadPackage();
+            this.pkg = STFSPackage.OpenFile(file);
+            STFSPackage sTFSPackage = (STFSPackage)this.pkg;
+            this.pictureBox1.Image = sTFSPackage.Thumbnail;
+            this.pictureBox2.Image = sTFSPackage.TitleThumbnail;
+            this.LogLn(string.Concat("Loading songs from '", this.pkg.FileName, "'..."));
+            this.statusLabel.Text = "Loading...";
+            try
+            {
+                DataArray dataArray = DTX.FromPlainTextBytes(this.pkg.GetFile("songs/songs.dta").GetBytes());
+                try
+                {
+                    this.PopulateListView(Utils.LoadSongs(dataArray, this.pkg));
+                }
+                catch (Exception exception)
+                {
+                    this.LogLn(string.Concat("Error loading songs from pack: ", exception.Message));
+                }
+            }
+            catch (Exception exception1)
+            {
+                this.LogLn("Error loading songs.dta!");
+            }
+        }
 
-		public void Log(string txt)
-		{
-			this.logTextBox.Invoke(new MethodInvoker(() => this.logTextBox.AppendText(txt)));
-		}
+        public void Log(string txt)
+        {
+            this.logTextBox.Invoke(new MethodInvoker(() => this.logTextBox.AppendText(txt)));
+        }
 
-		public static void Log_(string txt)
-		{
-			MainWin.static_this.Log(txt);
-		}
+        public static void Log_(string txt)
+        {
+            MainWin.static_this.Log(txt);
+        }
 
-		public void LogLn(string line)
-		{
-			this.logTextBox.Invoke(new MethodInvoker(() => this.logTextBox.AppendText(string.Concat(line, Environment.NewLine))));
-		}
+        public void LogLn(string line)
+        {
+            this.logTextBox.Invoke(new MethodInvoker(() => this.logTextBox.AppendText(string.Concat(line, Environment.NewLine))));
+        }
 
-		public static void LogLn_(string txt)
-		{
-			MainWin.static_this.LogLn(txt);
-		}
+        public static void LogLn_(string txt)
+        {
+            MainWin.static_this.LogLn(txt);
+        }
 
-		private void MainWin_Load(object sender, EventArgs e)
-		{
-			this.LogLn(string.Concat("MoggTools v", Assembly.GetEntryAssembly().GetName().Version.ToString()));
-		}
+        private void MainWin_Load(object sender, EventArgs e)
+        {
+            this.LogLn(string.Concat("MoggTools v", Assembly.GetEntryAssembly().GetName().Version.ToString()));
+        }
 
-		private void openPackageToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			OpenFileDialog openFileDialog = new OpenFileDialog()
-			{
-				Title = "Select package to open."
-			};
-			OpenFileDialog openFileDialog1 = openFileDialog;
-			openFileDialog1.Filter = string.Concat(openFileDialog1.Filter, "All Files (*.*)|*.*");
-			OpenFileDialog openFileDialog2 = openFileDialog;
-			openFileDialog2.Filter = string.Concat(openFileDialog2.Filter, "|STFS Package (*.*)|*.*");
-			OpenFileDialog openFileDialog3 = openFileDialog;
-			openFileDialog3.Filter = string.Concat(openFileDialog3.Filter, "|Ark Package (*.hdr)|*.hdr");
-			if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-			{
-				this.LoadFile(openFileDialog.FileName);
-			}
-		}
+        private void openPackageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog()
+            {
+                Title = "Select package to open."
+            };
+            OpenFileDialog openFileDialog1 = openFileDialog;
+            openFileDialog1.Filter = string.Concat(openFileDialog1.Filter, "All Files (*.*)|*.*");
+            OpenFileDialog openFileDialog2 = openFileDialog;
+            openFileDialog2.Filter = string.Concat(openFileDialog2.Filter, "|STFS Package (*.*)|*.*");
+            OpenFileDialog openFileDialog3 = openFileDialog;
+            openFileDialog3.Filter = string.Concat(openFileDialog3.Filter, "|Ark Package (*.hdr)|*.hdr");
+            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                this.LoadFile(openFileDialog.FileName);
+            }
+        }
 
-		private void PopulateListView(List<Song> songs)
-		{
-			this.LogLn(string.Concat("Found ", songs.Count, " song(s)"));
-			this.songCountLabel.Text = songs.Count.ToString();
-			this.songListView.BeginUpdate();
-			foreach (Song song in songs)
-			{
-				ListViewItem listViewItem = new ListViewItem(new string[] { song.Name, song.Artist, song.Album, song.Year, song.Duration })
-				{
-					Tag = song
-				};
-				this.songListView.Items.Add(listViewItem);
-			}
-			this.statusLabel.Text = "Ready";
-			this.songListView.EndUpdate();
-			this.EnableAll();
-			this.checkAllBtn_Click(null, null);
-		}
+        private void PopulateListView(List<Song> songs)
+        {
+            this.LogLn(string.Concat("Found ", songs.Count, " song(s)"));
+            this.songCountLabel.Text = songs.Count.ToString();
+            this.songListView.BeginUpdate();
+            foreach (Song song in songs)
+            {
+                ListViewItem listViewItem = new ListViewItem(new string[] { song.Name, song.Artist, song.Album, song.Year, song.Duration })
+                {
+                    Tag = song
+                };
+                this.songListView.Items.Add(listViewItem);
+            }
+            this.statusLabel.Text = "Ready";
+            this.songListView.EndUpdate();
+            this.EnableAll();
+            this.checkAllBtn_Click(null, null);
+        }
 
-		private void renameToArtistSongName_Click(object sender, EventArgs e)
-		{
-			Settings.Default.RenameToArtistSongName = this.renameToArtistSongName.Checked;
-			Settings.Default.Save();
-		}
+        private void renameToArtistSongName_Click(object sender, EventArgs e)
+        {
+            Settings.Default.RenameToArtistSongName = this.renameToArtistSongName.Checked;
+            Settings.Default.Save();
+        }
 
-		private void saveMIDIDataInRPP_Click(object sender, EventArgs e)
-		{
-			Settings.Default.SaveMidiDataInRPP = this.saveMIDIDataInRPP.Checked;
-			Settings.Default.Save();
-		}
+        private void saveMIDIDataInRPP_Click(object sender, EventArgs e)
+        {
+            Settings.Default.SaveMidiDataInRPP = this.saveMIDIDataInRPP.Checked;
+            Settings.Default.Save();
+        }
 
-		private void saveTempoMapInRPP_Click(object sender, EventArgs e)
-		{
-			Settings.Default.SaveTempoMapInRPP = this.saveTempoMapInRPP.Checked;
-			Settings.Default.Save();
-		}
+        private void saveTempoMapInRPP_Click(object sender, EventArgs e)
+        {
+            Settings.Default.SaveTempoMapInRPP = this.saveTempoMapInRPP.Checked;
+            Settings.Default.Save();
+        }
 
-		private void showTutorialSongs_Click(object sender, EventArgs e)
-		{
-			Settings.Default.ShowTutorialSongs = this.showTutorialSongs.Checked;
-			Settings.Default.Save();
-		}
+        private void showTutorialSongs_Click(object sender, EventArgs e)
+        {
+            Settings.Default.ShowTutorialSongs = this.showTutorialSongs.Checked;
+            Settings.Default.Save();
+        }
 
-		private void songListView_Clicked(object sender, MouseEventArgs e)
-		{
-			if (e.Button == System.Windows.Forms.MouseButtons.Right && this.songListView.FocusedItem.Bounds.Contains(e.Location))
-			{
-				this.songListContextMenu.Show(System.Windows.Forms.Cursor.Position);
-			}
-		}
+        private void songListView_Clicked(object sender, MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Right && this.songListView.FocusedItem.Bounds.Contains(e.Location))
+            {
+                this.songListContextMenu.Show(System.Windows.Forms.Cursor.Position);
+            }
+        }
 
-		private void songListView_ColumnClick(object sender, ColumnClickEventArgs e)
-		{
-			if (e.Column != this.sorter.SortColumn)
-			{
-				this.sorter.SortColumn = e.Column;
-				this.sorter.Order = SortOrder.Ascending;
-			}
-			else if (this.sorter.Order != SortOrder.Ascending)
-			{
-				this.sorter.Order = SortOrder.Ascending;
-			}
-			else
-			{
-				this.sorter.Order = SortOrder.Descending;
-			}
-			this.songListView.Sort();
-		}
+        private void songListView_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            if (e.Column != this.sorter.SortColumn)
+            {
+                this.sorter.SortColumn = e.Column;
+                this.sorter.Order = SortOrder.Ascending;
+            }
+            else if (this.sorter.Order != SortOrder.Ascending)
+            {
+                this.sorter.Order = SortOrder.Ascending;
+            }
+            else
+            {
+                this.sorter.Order = SortOrder.Descending;
+            }
+            this.songListView.Sort();
+        }
 
-		private void songListView_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
-		{
-			if (!e.IsSelected)
-			{
-				return;
-			}
-			Song tag = (Song)e.Item.Tag;
-		}
+        private void songListView_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            if (!e.IsSelected)
+            {
+                return;
+            }
+            Song tag = (Song)e.Item.Tag;
+        }
 
-		private void uncheckAllBtn_Click(object sender, EventArgs e)
-		{
-			for (int i = 0; i < this.songListView.Items.Count; i++)
-			{
-				this.songListView.Items[i].Checked = false;
-			}
-		}
+        private void uncheckAllBtn_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < this.songListView.Items.Count; i++)
+            {
+                this.songListView.Items[i].Checked = false;
+            }
+        }
 
-		private void unloadCurrentPackage_Click(object sender, EventArgs e)
-		{
-			this.unloadPackage();
-		}
+        private void unloadCurrentPackage_Click(object sender, EventArgs e)
+        {
+            this.unloadPackage();
+        }
 
-		private void unloadPackage()
-		{
-			if (this.pkg != null)
-			{
-				this.pkg.Dispose();
-			}
-			this.pkg = null;
-			this.songListView.Items.Clear();
-			this.songListView.Enabled = false;
-			this.createRppCheckedButton.Enabled = false;
-			this.extractCheckedMoggButton.Enabled = false;
-			this.decryptCheckedMoggButton.Enabled = false;
-			this.extractCheckedMidisBtn.Enabled = false;
-			this.extractCheckedDtasBtn.Enabled = false;
-			this.unloadCurrentPackageToolStripMenuItem.Enabled = false;
-			this.checkAllBtn.Enabled = false;
-			this.uncheckAllBtn.Enabled = false;
-			this.invertCheckedBtn.Enabled = false;
-			this.pictureBox1.Image = null;
-			this.pictureBox2.Image = null;
-			this.songCountLabel.Text = "";
-			this.Text = MainWin.AppName;
-		}
-	}
+        private void unloadPackage()
+        {
+            if (this.pkg != null)
+            {
+                this.pkg.Dispose();
+            }
+            this.pkg = null;
+            this.songListView.Items.Clear();
+            this.songListView.Enabled = false;
+            this.createRppCheckedButton.Enabled = false;
+            this.extractCheckedMoggButton.Enabled = false;
+            this.decryptCheckedMoggButton.Enabled = false;
+            this.extractCheckedMidisBtn.Enabled = false;
+            this.extractCheckedDtasBtn.Enabled = false;
+            this.unloadCurrentPackageToolStripMenuItem.Enabled = false;
+            this.checkAllBtn.Enabled = false;
+            this.uncheckAllBtn.Enabled = false;
+            this.invertCheckedBtn.Enabled = false;
+            this.pictureBox1.Image = null;
+            this.pictureBox2.Image = null;
+            this.songCountLabel.Text = "";
+            this.Text = MainWin.AppName;
+        }
+    }
 }

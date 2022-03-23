@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -15,4 +14,4 @@ using System.Runtime.InteropServices;
 [assembly: CompilationRelaxations(8)]
 [assembly: ComVisible(false)]
 [assembly: Guid("bb92c8be-5866-44c7-928d-5c7b6a2a9ca1")]
-[assembly: RuntimeCompatibility(WrapNonExceptionThrows=true)]
+[assembly: RuntimeCompatibility(WrapNonExceptionThrows = true)]
